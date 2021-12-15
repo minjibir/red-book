@@ -1,20 +1,21 @@
 package ds
 
 import org.scalatest.wordspec.AnyWordSpec
+import scala.collection.View
 
 class JistSpec extends AnyWordSpec {
-  
-	val jistInt: Jist[Int]    = Jist(1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
-	val jistStr: Jist[String] = Jist("a", "b", "c", "d", "e", "f")
 
-	val str0jist: Jist[String] = Jist("a", "b", "c")
-	val str1jist: Jist[String] = Jist("d", "e", "f")
+  // val jistInt: Jist[Int]    = Jist(1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
+  // val jistStr: Jist[String] = Jist("a", "b", "c", "d", "e", "f")
+
+  // val str0jist: Jist[String] = Jist("a", "b", "c")
+  // val str1jist: Jist[String] = Jist("d", "e", "f")
 
   "tail function" when {
     "called on an EmptyJist" must {
       "return an EmptyJist" in {
         val emptyJist = EmptyJist
-        val expected  = Jist.tail(emptyJist)
+        val expected = Jist.tail(emptyJist)
 
         assert(expected == EmptyJist)
       }
@@ -22,8 +23,8 @@ class JistSpec extends AnyWordSpec {
 
     "called on List with 1 element" must {
       "return EmptyJist" in {
-        val jist      = Cons(1, EmptyJist)
-        val expected  = Jist.tail(jist)
+        val jist = Cons(1, EmptyJist)
+        val expected = Jist.tail(jist)
 
         assert(expected == EmptyJist)
       }
@@ -31,8 +32,9 @@ class JistSpec extends AnyWordSpec {
 
     "called on list with multiple non-emtpy Jist" should {
       "return all but the first element" in {
+        val jistStr = Jist("a", "b", "c", "d", "e", "f")
         val expected = Jist.tail(jistStr)
-        
+
         assert(expected == Jist("b", "c", "d", "e", "f"))
       }
     }
@@ -41,17 +43,93 @@ class JistSpec extends AnyWordSpec {
   "setHead function" when {
     "called on EmptyJist" should {
       "return a new Jist with one element" in {
-        val expected  = Jist.setHead(EmptyJist, 0)
-        assert(expected == Cons(0, EmptyJist))
+        val expected = Jist.setHead(EmptyJist, "a")
+        assert(expected == Cons("a", EmptyJist))
       }
     }
 
     "called on Jist with 1 elelment" should {
       "return Jist with two element" in {
-        val expected  = Jist.setHead(Cons("z", EmptyJist), "y")
+        val jistStrv = Cons("z", EmptyJist)
+        val expected = Jist.setHead(jistStrv, "y")
 
-        assert(expected == Cons("y", Cons("z", EmptyJist)))
+        assert(expected == Cons("y", EmptyJist))
+      }
+    }
+
+    "called on Jist with multiple elements" should {
+      "return the same list of string with the new head replaced" in {
+        val jistInt = Jist(9, 1, 2, 3)
+        val expectedInt = Jist.setHead(jistInt, 0)
+
+        assert(expectedInt == Jist(0, 1, 2, 3))
+      }
+
+      "return the same list of Int with the new head replaced" in {
+        val jistStr = Jist("*", "b", "c")
+        val expectedStr = Jist.setHead(jistStr, "a")
+
+        assert(expectedStr == Jist("a", "b", "c"))
+      }
+    }
+
+  }
+
+  "append function" when {
+    "called with an empty Jist and an elemen" should {
+      "return a Jist with one element" in {
+        val expected = Jist.append(1, EmptyJist)
+
+        assert(expected == Jist(1))
+      }
+    }
+
+    "called with on Jist with multiple element" should {
+      "return a Jist with the new elelemtn at the end" in {
+        val jistInt = Jist(1, 2, 3)
+        val expectedInt = Jist.append(4, jistInt)
+
+        assert(expectedInt == Jist(1, 2, 3, 4))
+      }
+
+      "return the same list of Int with the new head replaced" in {
+        val jistStr = Jist("a", "b", "c")
+        val expectedStr = Jist.append("d", jistStr)
+
+        assert(expectedStr == Jist("a", "b", "c", "d"))
       }
     }
   }
+
+  "concat function" when {
+    "both Jist are empty" should {
+      "return empty Jist" in {
+        val expected = Jist.concat(EmptyJist, EmptyJist)
+        assert(expected == EmptyJist)
+      }
+    }
+
+    "one of the Jist is empty" should {
+      "return the non empty Jist" in {
+        val str0jist = Jist.concat(EmptyJist, Jist("a", "b", "c"))
+        val str1jist = Jist.concat(Jist("d", "e", "f"), EmptyJist)
+
+        assert(str0jist == Jist("a", "b", "c"))
+        assert(str1jist == Jist("d", "e", "f"))
+      }
+    }
+
+    "when both Jist are non empty" should {
+      "return the two merged into one Jist" in {
+        val str0jist  = Jist("a", "b", "c")
+        val str1jist  = Jist("d", "e", "f")
+        val actual    = Jist("a", "b", "c", "d", "e", "f")
+
+        val expected  = Jist.concat(str0jist, str1jist)
+
+        assert(expected == actual)
+      }
+    }
+  }
+
 }
