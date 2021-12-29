@@ -5,12 +5,6 @@ import scala.collection.View
 
 class JistSpec extends AnyWordSpec {
 
-  // val jistInt: Jist[Int]    = Jist(1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
-  // val jistStr: Jist[String] = Jist("a", "b", "c", "d", "e", "f")
-
-  // val str0jist: Jist[String] = Jist("a", "b", "c")
-  // val str1jist: Jist[String] = Jist("d", "e", "f")
-
   "tail function" when {
     "called on an EmptyJist" must {
       "return an EmptyJist" in {
@@ -119,7 +113,7 @@ class JistSpec extends AnyWordSpec {
       }
     }
 
-    "when both Jist are non empty" should {
+    "both Jist are non empty" should {
       "return the two merged into one Jist" in {
         val str0jist  = Jist("a", "b", "c")
         val str1jist  = Jist("d", "e", "f")
@@ -131,5 +125,97 @@ class JistSpec extends AnyWordSpec {
       }
     }
   }
+  
+  "drop function" when {
+    "given an empty Jist" must {
+      "return an empty Jist" in {
+        val decker: Jist[String] = Jist()
+        val result: Jist[String] = Jist.drop(decker, 1)
 
-}
+        assert(result.equals(EmptyJist))
+      }
+    }
+
+    "given a Jist with single element" must {
+      "return empty Jist" in {
+        val decker: Jist[Int] = Cons(1, EmptyJist)
+        val result: Jist[Int] = Jist.drop(decker, 1)
+
+        assert(result.equals(EmptyJist))
+      }
+    }
+
+    "given a Jist with multiple elements" should {
+      "return all but the specified number" in {
+        val decker: Jist[Int] = Jist(1, 2, 3, 4, 5, 6, 7, 8, 9, 0)
+        val result: Jist[Int] = Jist.drop(decker, 3)
+
+        assert(result.equals(Jist(4, 5, 6, 7, 8, 9, 0)))
+      }
+    }
+  }
+
+  "dropWhile function" when {
+    "given an empty Jist" must {
+      "return an empty Jist" in {
+        val decker: Jist[Int] = Jist()
+        val result: Jist[Int] = Jist.dropWhile(decker)(_ < 4)
+
+        assert(result.equals(EmptyJist))
+      }
+    }
+
+    "given a Jist with single element" must {
+      "return empty Jist" in {
+        val decker: Jist[String] = Jist("string")
+        val result: Jist[String] = Jist.dropWhile(decker)(_.contains("s"))
+
+        assert(result.equals(EmptyJist))
+      }
+    }
+
+    "given a Jist with multiple elements" should {
+      "return all but the specified number" in {
+        val decker: Jist[Int] = Jist(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+        val result0: Jist[Int] = Jist.dropWhile(decker)(i => i < 5)
+        val result1: Jist[Int] = Jist.dropWhile(decker)(_ < 0)
+        val result2: Jist[Int] = Jist.dropWhile(decker)(_ < 9)
+        
+        assert(result0 equals Jist(5, 6, 7, 8, 9))
+        assert(result1 equals decker)
+        assert(result2 equals Jist(9))
+        assert(result2 equals Cons(9, EmptyJist))
+      }
+    }
+  }
+
+  "init function" when {
+    "called with empty Jist argument" should {
+      "return an empty Jist" in {
+        val expected: Jist[String] = Jist.init(EmptyJist)
+        
+        assert(expected equals EmptyJist)
+      }
+    }
+
+    "called with single element Jist" should {
+      "return empty jist" in {
+        val expected: Jist[Int] = Jist.init(Jist(1))
+
+        assert(expected equals EmptyJist)
+      }
+    }
+
+    "called with multiple element Jist" should {
+      "return empty jist" in {
+        val expected0: Jist[Int] = Jist.init(Jist(0, 1))
+        val expected1: Jist[Int] = Jist.init(Jist(0, 1, 2, 3, 4))
+
+        assert(expected0 equals Jist(0))
+        assert(expected0 equals Cons(0, EmptyJist))
+        assert(expected1 equals Jist(0, 1, 2, 3))
+      }
+    }
+
+  }
+}    
