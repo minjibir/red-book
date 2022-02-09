@@ -132,4 +132,50 @@ class JistSpec extends AnyWordSpec {
     }
   }
 
+  "map function" should {
+    "correctly add one to each function to the Jist" in {
+      val jist = Jist(0, 1, 2, 3, 4, 5)
+      val expected = Jist(1, 2, 3, 4, 5, 6)
+      val actual = Jist.map(jist)(_ + 1)
+      
+      assert(actual == expected)
+    }
+
+    "correctly multiply each element by 2" in {
+      val jist = Jist(0, 1, 2, 3, 4, 5)
+      val expected = Jist(0, 2, 4, 6, 8, 10)
+      val actual = Jist.map(jist)(_ * 2)
+      
+      assert(actual == expected)
+    }
+  }
+
+  "filter function" should {
+    "filter out the ints that doesn't matches the given cond" in {
+      val jist = Jist(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+      val expected = Jist(1, 3, 5, 7, 9)
+      val actual = Jist.filter(jist)(_ % 2 > 0)
+      
+      assert(actual == expected)
+    }
+  
+    "filter out the strings that doesn't matches the given cond" in {
+      val jist = Jist("a", "b", "c", "d", "e")
+      val expected = Jist("b", "c", "d", "e")
+      val actual = Jist.filter(jist)(_ != "a")
+      
+      assert(actual == expected)
+    }
+  }
+
+  "flatMap function called with multiple Jist" should {
+    "return a single list containing all the sub-list's elems" in {      
+      val expected = Jist(1,1,2,2,3,3)
+      
+      val actual = Jist.flatMap(Jist(1,2,3))(i => Jist(i,i))
+      
+      assert(actual == expected)
+    }
+  }
+  
 }

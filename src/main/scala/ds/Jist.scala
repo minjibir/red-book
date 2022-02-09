@@ -49,7 +49,7 @@ package ds
 			case (EmptyJist, EmptyJist) => EmptyJist
 			case (Cons(_, _), EmptyJist) => a
 			case (EmptyJist, Cons(_, _)) => b
-			case (Cons(_, xs), Cons(_, ys)) => concat(xs, ys)
+			case (Cons(x, xs), Cons(_, ys)) => Cons(x, concat(xs, b))
 		}
 
 		@annotation.tailrec
@@ -71,6 +71,10 @@ package ds
 				loop(l, f, EmptyJist)
 			}
 
+		def foldLeft[A, B](jist: Jist[A], b: B)(f: (A, B) => B): B = jist match {
+			case EmptyJist => b
+			case Cons(h, t) => foldLeft(t, f(h, b))(f)
+		}
 
 		/*
 		Not everything works out so nicely. Implement a function, init, that returns a Jist
@@ -84,9 +88,45 @@ package ds
 			case Cons(x, Cons(_, EmptyJist)) => Cons(x, EmptyJist)
 			case Cons(x, Cons(y, ys)) => Cons(x, Cons(y, init(ys)))
 		}
+
+		def map[A, B](as: Jist[A])(f: A => B): Jist[B] = {
+			
+			@annotation.tailrec
+			def loop(a: Jist[A], d: Jist[B])(f: A => B): Jist[B] =
+				a match {
+					case EmptyJist => d
+					case Cons(h, t) => loop(t, append(f(h), d))(f)
+				}
+
+				loop(as, EmptyJist)(f)
+		}
+
+		def filter[A](as: Jist[A])(f: A => Boolean): Jist[A] = {
+
+			@annotation.tailrec
+			def loop(a: Jist[A], b: Jist[A])(f: A => Boolean): Jist[A] = a match {
+				case EmptyJist => b
+				case Cons(h, t) =>
+					val acc: Jist[A] = if(f(h)) append(h, b) else b
+					loop(t, acc)(f)
+			}
+
+			loop(as, EmptyJist)(f)
+		}
+
+		def flatMap[A, B](as: Jist[A])(f: A => Jist[B]): Jist[B] = {
+
+			@annotation.tailrec
+			def loop(a: Jist[A], b: Jist[B])(f: A => Jist[B]): Jist[B] =
+				a match {
+					case EmptyJist => b
+					case Cons(h, t) => loop(t, concat(b, f(h)))(f)
+				}
+
+			loop(as, EmptyJist)(f)
+		}
 	}
 
 sealed trait Jist[+A]
 case object EmptyJist extends Jist[Nothing]
 case class Cons[+A](head: A, tail: Jist[A]) extends Jist[A]
-
