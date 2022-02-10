@@ -129,7 +129,7 @@ package ds
 		// def flatFilter[A](as: Jist[A])(f: A => Boolean): Jist[A] =
 		// 	flatMap(as)(f)
 
-		def merge[A](a: Jist[A], b: Jist[A])(f: (A, A) => A): Jist[A] = {
+		def zipWith[A](a: Jist[A], b: Jist[A])(f: (A, A) => A): Jist[A] = {
 			def loop(x: Jist[A], y: Jist[A], z: Jist[A])(f: (A, A) => A): Jist[A] =
 				(x, y) match {
 					case (EmptyJist, EmptyJist) => z

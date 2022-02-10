@@ -183,7 +183,7 @@ class JistSpec extends AnyWordSpec {
       val a = Jist(1, 2, 3)
       val b = Jist(4, 5, 6)
       val expected = Jist(5, 7, 9)
-      val actual   = Jist.merge(a, b)(_ + _)
+      val actual   = Jist.zipWith(a, b)(_ + _)
 
       assert(actual == expected)
     }
