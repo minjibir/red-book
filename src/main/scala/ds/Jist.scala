@@ -125,6 +125,22 @@ package ds
 
 			loop(as, EmptyJist)(f)
 		}
+
+		// def flatFilter[A](as: Jist[A])(f: A => Boolean): Jist[A] =
+		// 	flatMap(as)(f)
+
+		def merge[A](a: Jist[A], b: Jist[A])(f: (A, A) => A): Jist[A] = {
+			def loop(x: Jist[A], y: Jist[A], z: Jist[A])(f: (A, A) => A): Jist[A] =
+				(x, y) match {
+					case (EmptyJist, EmptyJist) => z
+					case (Cons(_, _), EmptyJist) => concat(z, x)
+					case (EmptyJist, Cons(_, _)) => concat(z, y)
+					case (Cons(ah, at), Cons(bh, bt)) =>
+						loop(at, bt, append(f(ah, bh), z))(f)
+				}
+
+			loop(a, b, EmptyJist)(f)
+		}
 	}
 
 sealed trait Jist[+A]

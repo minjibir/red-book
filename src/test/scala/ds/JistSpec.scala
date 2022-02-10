@@ -177,5 +177,16 @@ class JistSpec extends AnyWordSpec {
       assert(actual == expected)
     }
   }
+
+  "combine function given two Jists " should {
+    "return one Jist by adding corresponding elems" in {
+      val a = Jist(1, 2, 3)
+      val b = Jist(4, 5, 6)
+      val expected = Jist(5, 7, 9)
+      val actual   = Jist.merge(a, b)(_ + _)
+
+      assert(actual == expected)
+    }
+  }
   
 }
