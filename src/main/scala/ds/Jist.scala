@@ -126,19 +126,6 @@ object Jist {
     loop(a, b, EmptyJist)(f)
   }
 
-  def hasSubsequence[A](sup: Jist[A], sub: Jist[A]): Boolean =
-		sup match {
-			case EmptyJist => false
-			case Cons(h, t) =>
-				val supLen = Jist.length(sup)
-				val subLen = Jist.length(sub)
-				val lenDif = supLen - subLen
-
-				val first = Jist.drop(sup, lenDif)
-				val second = Jist.dropLastN(sup, lenDif)
-
-				(sub == first) || (sub == second)
-		}
 }
 
 sealed trait Jist[+A]
