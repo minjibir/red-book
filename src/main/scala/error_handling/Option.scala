@@ -1,4 +1,4 @@
-package errorhandling
+package error_handling
 
 sealed trait Option[A]
 case object None extends Option[Nothing]
